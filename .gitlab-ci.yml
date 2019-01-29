@@ -1,0 +1,38 @@
+stages:
+  - build
+  - release
+
+services:
+  - docker:dind
+
+image: docker:stable
+
+before_script:
+  - docker info
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  PANDOC_VERSION: '2.5'
+
+build:
+  stage: build
+  tags:
+    - dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE || echo "could not pull image for use as cache"
+    - docker build --cache-from $CI_REGISTRY_IMAGE:$PANDOC_VERSION --build-arg PANDOC_VERSION=$PANDOC_VERSION -t $CI_REGISTRY_IMAGE:$PANDOC_VERSION .
+    - docker push $CI_REGISTRY_IMAGE:$PANDOC_VERSION
+
+release-image:
+  stage: release
+  tags:
+    - dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:$PANDOC_VERSION
+    - docker tag $CI_REGISTRY_IMAGE:$PANDOC_VERSION $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - master
+
