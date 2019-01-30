@@ -21,6 +21,7 @@ FROM fedora
 MAINTAINER wiegratz <wiegratz@uni-bremen.de>
 
 RUN dnf install -y \
+	make \
 	texlive \
 	texlive-babel-german \
 	texlive-base \
