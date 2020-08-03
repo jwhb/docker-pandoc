@@ -1,6 +1,5 @@
 FPM=fpm
-
-PANDOC_TAR_URL=https://github.com/jgm/pandoc/releases/download/${PKG_VERSION}/pandoc-${PKG_VERSION}-linux.tar.gz
+PANDOC_TAR_URL=https://github.com/jgm/pandoc/releases/download/${PKG_VERSION}/pandoc-${PKG_VERSION}-linux-amd64.tar.gz
 PANDOC_TAR_NAME=pandoc.tar.gz
 TMPINSTALLDIR=/tmp/$(PKG_NAME)-fpm-install
 
