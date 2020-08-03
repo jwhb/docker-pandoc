@@ -17,7 +17,7 @@ variables:
 build:
   stage: build
   tags:
-    - dind
+    - docker
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE || echo "could not pull image for use as cache"
@@ -27,7 +27,7 @@ build:
 release-image:
   stage: release
   tags:
-    - dind
+    - docker
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:$PANDOC_VERSION
