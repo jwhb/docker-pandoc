@@ -1,6 +1,8 @@
 stages:
-  - build
-  - release
+  - build:pandoc
+  - release:pandoc
+  - build:eisvogel
+  - release:eisvogel
 
 services:
   - docker:dind
@@ -9,30 +11,49 @@ image: docker:stable
 
 before_script:
   - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
 
 variables:
   DOCKER_HOST: tcp://docker:2375/
   PANDOC_VERSION: '2.10.1'
 
-build:
-  stage: build
+build:pandoc:
+  stage: build:pandoc
   tags:
     - docker
   script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE || echo "could not pull image for use as cache"
-    - docker build --cache-from $CI_REGISTRY_IMAGE:$PANDOC_VERSION --build-arg PANDOC_VERSION=$PANDOC_VERSION -t $CI_REGISTRY_IMAGE:$PANDOC_VERSION .
-    - docker push $CI_REGISTRY_IMAGE:$PANDOC_VERSION
+    - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" || echo "could not pull image for use as cache"
+    - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" .
+    - docker push "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}"
 
-release-image:
-  stage: release
+build:eisvogel:
+  stage: build:eisvogel
   tags:
     - docker
   script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE:$PANDOC_VERSION
-    - docker tag $CI_REGISTRY_IMAGE:$PANDOC_VERSION $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" || echo "could not pull image for use as cache"
+    - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" ./eisvogel/
+    - docker push "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel"
+
+release:pandoc:
+  stage: release:pandoc
+  tags:
+    - docker
+  script:
+    - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}"
+    - docker tag "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" "${CI_REGISTRY_IMAGE}:latest"
+    - docker push "${CI_REGISTRY_IMAGE}:latest"
+  only:
+    - master
+
+release:eisvogel:
+  stage: release:eisvogel
+  tags:
+    - docker
+  script:
+    - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel"
+    - docker tag "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" "${CI_REGISTRY_IMAGE}:eisvogel"
+    - docker push "${CI_REGISTRY_IMAGE}:eisvogel"
   only:
     - master
 
