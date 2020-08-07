@@ -18,10 +18,11 @@ RUN make rpm PKG_VERSION=$PANDOC_VERSION
 # create pandoc container by installing pandoc rpm and texlive
 FROM fedora
 
-MAINTAINER wiegratz <wiegratz@uni-bremen.de>
+LABEL maintainer="jwhb <jwhy@jwhy.de>"
 
 RUN dnf install -y \
 	make \
+	findutils \
 	texlive \
 	texlive-babel-german \
 	texlive-base \
