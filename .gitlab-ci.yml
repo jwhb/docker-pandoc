@@ -17,11 +17,13 @@ variables:
   PANDOC_VERSION: '2.11.1.1'
 
 test:pandoc:
+  before_script: []
   image: hadolint/hadolint:latest-alpine
   script:
     - hadolint Dockerfile
 
 test:eisvogel:
+  before_script: []
   image: hadolint/hadolint:latest-alpine
   script:
     - hadolint eisvogel/Dockerfile
