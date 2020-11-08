@@ -46,8 +46,8 @@ RUN dnf install -y \
   && dnf clean all
 
 # install pandoc from rpm
-COPY --from=rpmbuild /tmp/rpmbuild/pandoc*.rpm /tmp/pandoc.rpm
-RUN dnf localinstall -y /tmp/pandoc.rpm && rm -f /tmp/pandoc.rpm
+COPY --from=rpmbuild /tmp/rpmbuild/pandoc*.rpm /root/pandoc.rpm
+RUN dnf localinstall -y /root/pandoc.rpm && dnf clean all
 
 WORKDIR /source
 

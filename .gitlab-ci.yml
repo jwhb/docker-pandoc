@@ -4,10 +4,13 @@ stages:
   - build-variant
   - release
 
-services:
-  - docker:dind
+default:
+  image: docker:stable
+  tags:
+    - docker
+  services:
+    - docker:dind
 
-image: docker:stable
 
 before_script:
   - docker info
@@ -19,20 +22,20 @@ variables:
 
 test:pandoc:
   before_script: []
+  services: []
   image: hadolint/hadolint:latest-alpine
   script:
     - hadolint Dockerfile
 
 test:eisvogel:
   before_script: []
+  services: []
   image: hadolint/hadolint:latest-alpine
   script:
     - hadolint eisvogel/Dockerfile
 
 build:pandoc:
   stage: build
-  tags:
-    - docker
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" || echo "could not pull image for use as cache"
     - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" .
@@ -40,8 +43,6 @@ build:pandoc:
 
 build-variant:eisvogel:
   stage: build-variant
-  tags:
-    - docker
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" || echo "could not pull image for use as cache"
     - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" ./eisvogel/
@@ -49,8 +50,6 @@ build-variant:eisvogel:
 
 release:pandoc:
   stage: release
-  tags:
-    - docker
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}"
     - docker tag "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" "${CI_REGISTRY_IMAGE}:latest"
@@ -60,12 +59,18 @@ release:pandoc:
 
 release:eisvogel:
   stage: release
-  tags:
-    - docker
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel"
     - docker tag "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" "${CI_REGISTRY_IMAGE}:eisvogel"
     - docker push "${CI_REGISTRY_IMAGE}:eisvogel"
   only:
     - master
+
+release:rpm:
+  stage: release
+  script:
+    - "id=$(docker create ${CI_REGISTRY_IMAGE}:${PANDOC_VERSION} ls) && docker cp $id:/root/pandoc.rpm - > pandoc-${PANDOC_VERSION}.rpm"
+  artifacts:
+    paths:
+      - "*.rpm"
 
