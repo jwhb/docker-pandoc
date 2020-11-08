@@ -1,9 +1,7 @@
 stages:
   - test
-  - build:pandoc
-  - release:pandoc
-  - build:eisvogel
-  - release:eisvogel
+  - build
+  - release
 
 services:
   - docker:dind
@@ -29,7 +27,7 @@ test:eisvogel:
     - hadolint eisvogel/Dockerfile
 
 build:pandoc:
-  stage: build:pandoc
+  stage: build
   tags:
     - docker
   script:
@@ -38,7 +36,7 @@ build:pandoc:
     - docker push "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}"
 
 build:eisvogel:
-  stage: build:eisvogel
+  stage: build
   tags:
     - docker
   script:
@@ -47,7 +45,7 @@ build:eisvogel:
     - docker push "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel"
 
 release:pandoc:
-  stage: release:pandoc
+  stage: release
   tags:
     - docker
   script:
@@ -58,7 +56,7 @@ release:pandoc:
     - master
 
 release:eisvogel:
-  stage: release:eisvogel
+  stage: release
   tags:
     - docker
   script:
