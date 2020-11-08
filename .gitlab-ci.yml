@@ -1,6 +1,7 @@
 stages:
   - test
   - build
+  - build-variant
   - release
 
 services:
@@ -37,8 +38,8 @@ build:pandoc:
     - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" .
     - docker push "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}"
 
-build:eisvogel:
-  stage: build
+build-variant:eisvogel:
+  stage: build-variant
   tags:
     - docker
   script:
