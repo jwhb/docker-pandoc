@@ -1,5 +1,5 @@
 # build pandoc rpm with fpm
-FROM ruby:alpine AS rpmbuild
+FROM ruby:alpine3.13 AS rpmbuild
 
 ARG PANDOC_VERSION
 
@@ -9,10 +9,10 @@ RUN test -n "$PANDOC_VERSION" || (echo "ERROR: PANDOC_VERSION not set" && exit 1
 # install fpm and build tools
 RUN apk --no-cache add \
   make=4.3-r0 \
-  gcc=9.3.0-r2 \
+  gcc=10.2.1_pre1-r3 \
   libc-dev=0.7.2-r3 \
-  wget=1.20.3-r1 \
-  rpm=4.15.1-r2
+  wget=1.21.1-r1 \
+  rpm=4.16.1-r0
 RUN gem install fpm:1.11.0
 
 # make rpm
