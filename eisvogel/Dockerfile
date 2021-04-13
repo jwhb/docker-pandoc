@@ -1,6 +1,8 @@
 ARG PANDOC_VERSION
 FROM registry.gitlab.com/jwhb/docker-pandoc:$PANDOC_VERSION
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 RUN dnf install -y \
     python3-pip \
     texlive-adjustbox \
@@ -39,10 +41,9 @@ RUN curl -Lo /tmp/pandoc-include-code.tar.gz \
   && tar -xvzf /tmp/pandoc-include-code.tar.gz -C /usr/local/bin/ \
   && rm /tmp/pandoc-include-code.tar.gz
 
-RUN curl -Lo /tmp/Eisvogel.tar.gz \
-    "https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download/v1.5.0/Eisvogel.tar.gz" \
-  && mkdir -p "$HOME/.pandoc/templates" \
-  && tar -xvzf /tmp/Eisvogel.tar.gz -C "$HOME/.pandoc/templates" eisvogel.tex \
-  && rm /tmp/Eisvogel.tar.gz \
-  && mv "$HOME/.pandoc/templates/eisvogel.tex" "$HOME/.pandoc/templates/eisvogel.latex"
+RUN mkdir -p "$HOME/.pandoc/templates" \
+  && curl -L \
+    "https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download/v2.0.0/Eisvogel-2.0.0.tar.gz" \
+  | tar -xvz -C "$HOME/.pandoc/templates" eisvogel.latex \
+  && ln -s eisvogel.latex "$HOME/.pandoc/templates/eisvogel.tex"
 
