@@ -12,7 +12,7 @@ RUN apk --no-cache add \
   gcc=10.2.1_pre1-r3 \
   libc-dev=0.7.2-r3 \
   wget=1.21.1-r1 \
-  rpm=4.16.1-r0
+  rpm=4.16.1.3-r0
 RUN gem install fpm:1.11.0
 
 # make rpm
