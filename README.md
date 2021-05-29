@@ -1,7 +1,6 @@
 Docker Pandoc Image
 ===================
 
-[![pipeline status](https://gitlab.com/jwhb/docker-pandoc/badges/main/pipeline.svg)](https://gitlab.com/jwhb/docker-pandoc/-/commits/main)
 
 This repository produces the following artifacts:
 
@@ -9,6 +8,7 @@ This repository produces the following artifacts:
 * **Eisvogel image**, based on Pandoc image, [Eisvogel template](https://github.com/Wandmalfarbe/pandoc-latex-template) and additional LaTeX packages pre-installed.
 * **Pandoc RPM**, for x86\_64 rpm-based Linux systems.
 
+[![CI Pipeline Status.](https://gitlab.com/jwhb/docker-pandoc/badges/main/pipeline.svg)](https://gitlab.com/jwhb/docker-pandoc/-/commits/main)
 
 Usage
 -----
@@ -30,7 +30,7 @@ docker run --rm -v $PWD:/source -w /source -it registry.gitlab.com/jwhb/docker-p
 
 ### Use the RPM package
 The RPM can be installed on x86\_64 rpm-based Linux systems.
-
+Download the latest RPM build from https://gitlab.com/jwhb/docker-pandoc/-/packages.
 
 Build this image
 ----------------
