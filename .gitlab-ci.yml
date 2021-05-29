@@ -11,7 +11,6 @@ default:
   services:
     - docker:dind
 
-
 before_script:
   - docker info
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
@@ -21,6 +20,8 @@ variables:
   PANDOC_VERSION: '2.14'
 
 test:pandoc:
+  stage: test
+  needs: []
   before_script: []
   services: []
   image: hadolint/hadolint:latest-alpine
@@ -28,6 +29,8 @@ test:pandoc:
     - hadolint Dockerfile
 
 test:eisvogel:
+  stage: test
+  needs: []
   before_script: []
   services: []
   image: hadolint/hadolint:latest-alpine
@@ -36,6 +39,7 @@ test:eisvogel:
 
 build:pandoc:
   stage: build
+  needs: ["test:pandoc"]
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" || echo "could not pull image for use as cache"
     - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" .
@@ -43,6 +47,7 @@ build:pandoc:
 
 build-variant:eisvogel:
   stage: build-variant
+  needs: ["build:pandoc", "test:eisvogel"]
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" || echo "could not pull image for use as cache"
     - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" ./eisvogel/
@@ -50,6 +55,7 @@ build-variant:eisvogel:
 
 release:pandoc:
   stage: release
+  needs: ["build:pandoc"]
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}"
     - docker tag "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" "${CI_REGISTRY_IMAGE}:latest"
@@ -59,6 +65,7 @@ release:pandoc:
 
 release:eisvogel:
   stage: release
+  needs: ["build-variant:eisvogel"]
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel"
     - docker tag "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" "${CI_REGISTRY_IMAGE}:eisvogel"
@@ -68,9 +75,12 @@ release:eisvogel:
 
 release:rpm:
   stage: release
+  needs: ["build:pandoc"]
   script:
     - "id=$(docker create ${CI_REGISTRY_IMAGE}:${PANDOC_VERSION} ls) && docker cp $id:/root/pandoc.rpm - > pandoc-${PANDOC_VERSION}.rpm"
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file pandoc-${PANDOC_VERSION}.rpm "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/pandoc-rpm/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}.rpm"'
+  only:
+    - master
   artifacts:
     paths:
       - "*.rpm"
