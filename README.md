@@ -1,6 +1,8 @@
 Docker Pandoc Image
 ===================
 
+[![pipeline status](https://gitlab.com/jwhb/docker-pandoc/badges/main/pipeline.svg)](https://gitlab.com/jwhb/docker-pandoc/-/commits/main)
+
 This repository produces the following artifacts:
 
 * **Pandoc image**, based on Fedora 35, LaTeX base environment pre-installed.
