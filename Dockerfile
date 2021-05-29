@@ -21,7 +21,7 @@ COPY Makefile /tmp/rpmbuild
 RUN make rpm PKG_VERSION=$PANDOC_VERSION
 
 # create pandoc container by installing pandoc rpm and texlive
-FROM fedora:33
+FROM fedora:35
 
 LABEL maintainer="jwhb <jwhy@jwhy.de>"
 
