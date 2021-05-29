@@ -61,7 +61,8 @@ release:pandoc:
     - docker tag "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}" "${CI_REGISTRY_IMAGE}:latest"
     - docker push "${CI_REGISTRY_IMAGE}:latest"
   only:
-    - master
+    - main
+    - tags
 
 release:eisvogel:
   stage: release
@@ -71,7 +72,8 @@ release:eisvogel:
     - docker tag "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" "${CI_REGISTRY_IMAGE}:eisvogel"
     - docker push "${CI_REGISTRY_IMAGE}:eisvogel"
   only:
-    - master
+    - main
+    - tags
 
 release:rpm:
   stage: release
@@ -80,7 +82,7 @@ release:rpm:
     - "id=$(docker create ${CI_REGISTRY_IMAGE}:${PANDOC_VERSION} ls) && docker cp $id:/root/pandoc.rpm - > pandoc-${PANDOC_VERSION}.rpm"
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file pandoc-${PANDOC_VERSION}.rpm "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/pandoc-rpm/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}.rpm"'
   only:
-    - master
+    - tags
   artifacts:
     paths:
       - "*.rpm"
