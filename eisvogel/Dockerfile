@@ -34,7 +34,7 @@ RUN dnf install -y \
     texlive-enumitem-zref \
   && dnf clean all
 
-RUN pip3 install --no-cache-dir pandoc-include==0.8.3
+RUN pip3 install --no-cache-dir pandoc-include==0.8.7
 
 RUN curl -Lo /tmp/pandoc-include-code.tar.gz \
     "https://github.com/owickstrom/pandoc-include-code/releases/download/v1.2.0.2/pandoc-include-code-linux-ghc8-pandoc-1-19.tar.gz" \
