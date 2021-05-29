@@ -70,6 +70,7 @@ release:rpm:
   stage: release
   script:
     - "id=$(docker create ${CI_REGISTRY_IMAGE}:${PANDOC_VERSION} ls) && docker cp $id:/root/pandoc.rpm - > pandoc-${PANDOC_VERSION}.rpm"
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file pandoc-${PANDOC_VERSION}.rpm "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/pandoc-rpm/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}.rpm"'
   artifacts:
     paths:
       - "*.rpm"
