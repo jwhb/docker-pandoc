@@ -35,7 +35,7 @@ test:eisvogel:
   services: []
   image: hadolint/hadolint:latest-alpine
   script:
-    - hadolint eisvogel/Dockerfile
+    - hadolint variants/eisvogel.Dockerfile
 
 build:pandoc:
   stage: build
@@ -50,7 +50,7 @@ build-variant:eisvogel:
   needs: ["build:pandoc", "test:eisvogel"]
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" || echo "could not pull image for use as cache"
-    - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" ./eisvogel/
+    - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" ./variants -f ./variants/eisvogel.Dockerfile
     - docker push "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel"
 
 release:pandoc:
