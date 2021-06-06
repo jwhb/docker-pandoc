@@ -28,7 +28,7 @@ test:pandoc:
   script:
     - hadolint Dockerfile
 
-test:eisvogel:
+test:variants:
   stage: test
   needs: []
   before_script: []
@@ -36,6 +36,7 @@ test:eisvogel:
   image: hadolint/hadolint:latest-alpine
   script:
     - hadolint variants/eisvogel.Dockerfile
+    - hadolint variants/lni.Dockerfile
 
 build:pandoc:
   stage: build
@@ -47,11 +48,19 @@ build:pandoc:
 
 build-variant:eisvogel:
   stage: build-variant
-  needs: ["build:pandoc", "test:eisvogel"]
+  needs: ["build:pandoc", "test:variants"]
   script:
     - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" || echo "could not pull image for use as cache"
     - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel" ./variants -f ./variants/eisvogel.Dockerfile
     - docker push "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-eisvogel"
+
+build-variant:lni:
+  stage: build-variant
+  needs: ["build:pandoc", "test:variants"]
+  script:
+    - docker pull "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-lni" || echo "could not pull image for use as cache"
+    - docker build --cache-from "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-lni" --build-arg PANDOC_VERSION="$PANDOC_VERSION" -t "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-lni" ./variants -f ./variants/lni.Dockerfile
+    - docker push "${CI_REGISTRY_IMAGE}:${PANDOC_VERSION}-lni"
 
 release:pandoc:
   stage: release
