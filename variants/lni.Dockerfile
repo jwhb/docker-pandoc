@@ -4,13 +4,15 @@ FROM registry.gitlab.com/jwhb/docker-pandoc:$PANDOC_VERSION
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN dnf install -y \
+    latexmk \
+    texlive-babel-german \
+    texlive-biblatex-lni \
     texlive-ccicons \
     texlive-cleveref \
+    texlive-cm-super \
     texlive-libertine \
     texlive-lni \
-    texlive-biblatex-lni \
-    texlive-nag \
     texlive-mwe \
-    texlive-cm-super \
+    texlive-nag \
   && dnf clean all
 
