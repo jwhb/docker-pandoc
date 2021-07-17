@@ -32,16 +32,14 @@ RUN dnf install -y \
     texlive-xecjk \
     texlive-xurl \
     texlive-enumitem-zref \
-  && dnf clean all
-
-RUN pip3 install --no-cache-dir pandoc-include==0.8.7
-
-RUN curl -Lo /tmp/pandoc-include-code.tar.gz \
+  && dnf clean all \
+  && pip3 install --no-cache-dir pandoc-include==0.8.7 \
+  && curl -Lo /tmp/pandoc-include-code.tar.gz \
     "https://github.com/owickstrom/pandoc-include-code/releases/download/v1.2.0.2/pandoc-include-code-linux-ghc8-pandoc-1-19.tar.gz" \
   && tar -xvzf /tmp/pandoc-include-code.tar.gz -C /usr/local/bin/ \
-  && rm /tmp/pandoc-include-code.tar.gz
-
-RUN mkdir -p "$HOME/.pandoc/templates" \
+  && rm /tmp/pandoc-include-code.tar.gz \
+    \
+  && mkdir -p "$HOME/.pandoc/templates" \
   && curl -L \
     "https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download/v2.0.0/Eisvogel-2.0.0.tar.gz" \
   | tar -xvz -C "$HOME/.pandoc/templates" eisvogel.latex \
