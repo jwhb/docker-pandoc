@@ -17,7 +17,7 @@ before_script:
 
 variables:
   DOCKER_HOST: tcp://docker:2375/
-  PANDOC_VERSION: '2.14'
+  PANDOC_VERSION: '2.14.2'
 
 test:pandoc:
   stage: test
