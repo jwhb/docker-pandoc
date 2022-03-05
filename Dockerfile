@@ -1,5 +1,5 @@
 # build pandoc rpm with fpm
-FROM ruby:alpine3.13 AS rpmbuild
+FROM ruby:alpine3.15 AS rpmbuild
 
 ARG PANDOC_VERSION
 
@@ -7,11 +7,11 @@ ARG PANDOC_VERSION
 RUN test -n "$PANDOC_VERSION" || (echo "ERROR: PANDOC_VERSION not set" && exit 1) \
   && apk --no-cache add \
     make=4.3-r0 \
-    gcc=10.2.1_pre1-r3 \
+    gcc=10.3.1_git20211027-r0 \
     libc-dev=0.7.2-r3 \
-    wget=1.21.1-r1 \
-    rpm=4.16.1.3-r0 \
-  && gem install fpm:1.11.0
+    wget=1.21.2-r2 \
+    rpm=4.16.1.3-r1 \
+  && gem install fpm:1.14.1
 
 # make rpm
 WORKDIR /tmp/rpmbuild
@@ -19,7 +19,7 @@ COPY Makefile /tmp/rpmbuild
 RUN make rpm PKG_VERSION=$PANDOC_VERSION
 
 # create pandoc container by installing pandoc rpm and texlive
-FROM fedora:34
+FROM fedora:35
 
 LABEL maintainer="jwhb <jwhy@jwhy.de>"
 
