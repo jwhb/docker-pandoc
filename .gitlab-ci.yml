@@ -1,11 +1,17 @@
 stages:
-  - test
+  - static-test
   - build
   - build-variant
+  - test
   - release
 
 include:
   - template: Security/Container-Scanning.gitlab-ci.yml
+
+container_scanning:
+  before_script: []
+  variables:
+    DOCKER_IMAGE: ${CI_REGISTRY_IMAGE}
 
 default:
   image: docker:stable
@@ -23,7 +29,7 @@ variables:
   PANDOC_VERSION: '2.17.1.1'
 
 test:pandoc:
-  stage: test
+  stage: static-test
   needs: []
   before_script: []
   services: []
@@ -32,7 +38,7 @@ test:pandoc:
     - hadolint Dockerfile
 
 test:eisvogel:
-  stage: test
+  stage: static-test
   needs: []
   before_script: []
   services: []
