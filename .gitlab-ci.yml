@@ -4,6 +4,9 @@ stages:
   - build-variant
   - release
 
+include:
+  - template: Security/Container-Scanning.gitlab-ci.yml
+
 default:
   image: docker:stable
   tags:
